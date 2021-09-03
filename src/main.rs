@@ -108,14 +108,9 @@ impl Board {
     }
 
     fn print(&self) {
-        let mut indent = (self.board.len() as i32) / 2 + 4;
-        let mut step = -2;
+        let indent = 0;
         for line in &self.board {
             line.print(indent);
-            indent += step;
-            if indent == 0 {
-                step *= -1;
-            }
         }
     }
 
