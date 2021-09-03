@@ -134,6 +134,7 @@ impl Board {
     }
 
     fn find_neighbours_in_adjcent_line(&self, cur_size: usize, adj_size: usize, cur_col: usize) -> Vec<usize> {
+        //TODO: will not work for lines with same size since even if we know which line is higher, it doesn't tell us which is indented to left regard the other
         let offset = (cur_size as isize) - (adj_size as isize);
         let new_col = (cur_col as isize) - offset;
         let mut r = Vec::new();
