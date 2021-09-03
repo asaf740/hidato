@@ -138,79 +138,50 @@ impl Board {
         self.consts.sort();
     }
 
+    fn find_neighbours_in_adjcent_line(&self, cur_size: usize, adj_size: usize, cur_col: usize) -> Vec<usize> {
+        let offset = (cur_size as isize) - (adj_size as isize);
+        let new_col = (cur_col as isize) - offset;
+        let mut r = Vec::new();
+
+        if cur_col < adj_size {
+            r.push(cur_col);
+        }
+
+        if new_col >= 0 
+        {
+            let new_col = new_col as usize;
+            if ( new_col < adj_size) {
+                r.push( new_col );
+            }
+
+        }
+        
+        return r;
+    }
+
     fn find_neighbours(&self, current_cell: Point) -> Vec<Point> {
         let mut r = Vec::new();
-        let middle_line = self.board.len()/2;
         let cur_line = current_cell.line;
         let cur_col = current_cell.col;
+        let cur_line_size = self.board[cur_line].line.len();
         
         
-        if cur_line < middle_line {
-            if  cur_line > 0 {
-                if cur_col > 0 {
-                    let top_left = Point{line:cur_line-1, col:cur_col-1};
-                    r.push(top_left);
-                }            
-                if cur_col < self.board[cur_line-1].line.len() {
-                    let top_right = Point{line:cur_line-1, col:cur_col};
-                    r.push(top_right);
-                }
-            }
-
-            if cur_line < self.board.len()-1 { //should always be true
-                let bottom_left = Point{line:cur_line+1, col:cur_col};
-                r.push(bottom_left);
-                            
-                if cur_col+1 < self.board[cur_line+1].line.len() { //should always be true
-                    let bottom_right = Point{line:cur_line+1, col:cur_col+1};
-                    r.push(bottom_right);
-                }
+        if cur_line > 0 {
+            let prev_line_size = self.board[cur_line-1].line.len();
+            let prev_cols = self.find_neighbours_in_adjcent_line( cur_line_size, prev_line_size, cur_col);
+            for c in prev_cols{
+                r.push( Point{line:cur_line-1, col:c} );
             }
         }
 
-        if cur_line > middle_line {
-            if  cur_line > 0 { //should always be true
-                let top_left = Point{line:cur_line-1, col:cur_col};
-                r.push(top_left);
-                            
-                if cur_col + 1 < self.board[cur_line-1].line.len() { //should always be true
-                    let top_right = Point{line:cur_line-1, col:cur_col + 1};
-                    r.push(top_right);
-                }
-            }
-
-            if cur_line < self.board.len()-1 {
-                if cur_col > 0 {
-                    let bottom_left = Point{line:cur_line+1, col:cur_col-1};
-                    r.push(bottom_left);
-                }
-                            
-                if cur_col < self.board[cur_line+1].line.len() { 
-                    let bottom_right = Point{line:cur_line+1, col:cur_col};
-                    r.push(bottom_right);
-                }
+        if cur_line + 1 < self.board.len() {
+            let next_line_size = self.board[cur_line+1].line.len();
+            let next_cols = self.find_neighbours_in_adjcent_line( cur_line_size, next_line_size, cur_col);
+            for c in next_cols{
+                r.push( Point{line:cur_line+1, col:c} );
             }
         }
 
-        if cur_line == middle_line {
-            if (cur_line > 0) && ( cur_line < self.board.len()-1 ) { //should always be true
-                if cur_col > 0 {
-                    let top_left = Point{line:cur_line-1, col: cur_col-1};
-                    let bottom_left = Point{line:cur_line+1, col: cur_col-1};
-                    r.push(top_left);
-                    r.push(bottom_left);
-                }
-                if cur_col < self.board[cur_line-1].line.len() {
-                    let top_right = Point{line:cur_line-1, col: cur_col};                    
-                    r.push(top_right);
-                }
-
-                if cur_col < self.board[cur_line+1].line.len() {
-                    let bottom_right = Point{line:cur_line+1, col: cur_col};                    
-                    r.push(bottom_right);
-                }
-            }
-        }
 
         if cur_col > 0{
             r.push(Point{ line: cur_line, col: cur_col - 1});
